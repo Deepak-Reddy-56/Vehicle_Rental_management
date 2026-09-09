@@ -1,0 +1,3 @@
+/* Keep implementation details out of the business-facing UI. */
+.split:has(.quote){grid-template-columns:1fr}
+.quote{display:none!important}

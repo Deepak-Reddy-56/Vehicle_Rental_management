@@ -1,6 +1,6 @@
-# VROOM — Vehicle Rental Management System
+# VROOM - Vehicle Rental Management System
 
-P15 — Automotive / Mobility — Christ University CIA-3
+P15 - Automotive / Mobility - Christ University CIA-3
 
 A backend-first vehicle rental management system with three role-specific interfaces: Customer Rental Portal, Branch Staff Operations Portal, and Admin Management Portal.
 

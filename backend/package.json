@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": {"dev":"nodemon server.js","start":"node server.js","seed":"node seed.js"},
+  "scripts": {"dev":"nodemon server_v2.js","start":"node server_v2.js","seed":"node seed.js"},
   "dependencies": {
     "bcryptjs":"^2.4.3",
     "cors":"^2.8.5",

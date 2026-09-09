@@ -1,0 +1,33 @@
+{
+  "info": {"name":"Vehicle Rental Management API","schema":"https://schema.getpostman.com/json/collection/v2.1.0/collection.json","description":"CIA-3 end-to-end Postman collection for customer, branch staff and admin workflows."},
+  "variable":[{"key":"baseUrl","value":"http://localhost:5000/api"},{"key":"token","value":""},{"key":"customerId","value":""},{"key":"vehicleId","value":""},{"key":"bookingId","value":""},{"key":"branchId","value":""}],
+  "item":[
+    {"name":"Health","request":{"method":"GET","url":"{{baseUrl}}/health"}},
+    {"name":"Auth","item":[
+      {"name":"Register customer","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"name\": \"Demo Customer\",\n  \"email\": \"customer@example.com\",\n  \"password\": \"change-me\"\n}"},"url":"{{baseUrl}}/auth/register"}},
+      {"name":"Login","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"email\": \"customer@example.com\",\n  \"password\": \"change-me\"\n}"},"url":"{{baseUrl}}/auth/login"},"event":[{"listen":"test","script":{"exec":["if (pm.response.code === 200) { const j = pm.response.json(); pm.collectionVariables.set('token', j.data.token); pm.collectionVariables.set('customerId', j.data.user.id); }"]}}]}
+    ]},
+    {"name":"Branches","item":[
+      {"name":"List branches","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":"{{baseUrl}}/branches"}}
+    ]},
+    {"name":"Vehicles","item":[
+      {"name":"Search availability","request":{"method":"GET","url":"{{baseUrl}}/vehicles/search?branchId={{branchId}}&startDate=2030-01-10T10:00:00&endDate=2030-01-10T18:00:00&type=BIKE"}},
+      {"name":"List vehicles","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":"{{baseUrl}}/vehicles"}}
+    ]},
+    {"name":"Bookings","item":[
+      {"name":"Create booking","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{token}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"vehicleId\": \"{{vehicleId}}\",\n  \"startDate\": \"2030-01-10T10:00:00\",\n  \"endDate\": \"2030-01-10T18:00:00\",\n  \"addOns\": []\n}"},"url":"{{baseUrl}}/bookings"},"event":[{"listen":"test","script":{"exec":["if (pm.response.code === 201) pm.collectionVariables.set('bookingId', pm.response.json().data._id);"]}}]},
+      {"name":"Get booking","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":"{{baseUrl}}/bookings/{{bookingId}}"}},
+      {"name":"Cancel booking","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":"{{baseUrl}}/bookings/{{bookingId}}/cancel"}},
+      {"name":"Customer history","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":"{{baseUrl}}/customers/{{customerId}}/bookings"}}
+    ]},
+    {"name":"Staff Operations","item":[
+      {"name":"Staff bookings","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":"{{baseUrl}}/staff/bookings"}},
+      {"name":"Pickup inspection","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"body":{"mode":"formdata","formdata":[{"key":"odometer","value":"1000","type":"text"},{"key":"fuelLevel","value":"75","type":"text"}]},"url":"{{baseUrl}}/bookings/{{bookingId}}/pickup"}},
+      {"name":"Return inspection","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"body":{"mode":"formdata","formdata":[{"key":"odometer","value":"1124","type":"text"},{"key":"fuelLevel","value":"50","type":"text"},{"key":"damageCharge","value":"0","type":"text"}]},"url":"{{baseUrl}}/bookings/{{bookingId}}/return"}}
+    ]},
+    {"name":"Admin Reports","item":[
+      {"name":"Dashboard","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":"{{baseUrl}}/admin/dashboard"}},
+      {"name":"Utilization report","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":"{{baseUrl}}/admin/reports/utilization"}}
+    ]}
+  ]
+}

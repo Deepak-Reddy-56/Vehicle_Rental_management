@@ -1,5 +1,6 @@
 const nativeFetch = window.fetch.bind(window);
 const API_BASE = '/api';
+const BACKEND_ORIGIN = `${window.location.protocol}//${window.location.hostname}:5000`;
 
 function authHeaders() {
   const token = localStorage.getItem('vrm_token');
@@ -44,6 +45,21 @@ function showInfoModal({ title, kicker, content, confirmText = 'Done', id = 'vrm
     button.onclick = () => closeOverlay(id);
   });
   document.body.appendChild(wrap);
+}
+
+function resolveImageUrl(src) {
+  if (!src || typeof src !== 'string') return src;
+  if (src.startsWith('blob:') || src.startsWith('data:') || /^https?:\/\//i.test(src)) return src;
+  if (src.startsWith('/uploads/')) return `${BACKEND_ORIGIN}${src}`;
+  return src;
+}
+
+function fixUploadedImageSources(root = document) {
+  root.querySelectorAll?.('img[src^="/uploads/"]').forEach(img => {
+    const src = img.getAttribute('src');
+    const resolved = resolveImageUrl(src);
+    if (resolved && img.src !== resolved) img.src = resolved;
+  });
 }
 
 function bookingAddOnNames(booking) {
@@ -148,6 +164,7 @@ async function showStoredOrFetchedBill(bookingId) {
 }
 
 function applyAddonPresentation() {
+  fixUploadedImageSources();
   document.querySelectorAll('.addon-grid').forEach(grid => {
     if (grid.dataset.vroomEnhanced === '1') return;
     grid.dataset.vroomEnhanced = '1';
@@ -294,12 +311,14 @@ async function showPickupDetails(bookingId) {
 window.fetch = wrappedFetch;
 
 const observer = new MutationObserver(() => {
+  fixUploadedImageSources();
   applyAddonPresentation();
   applyCustomerBillButtons();
 });
 observer.observe(document.documentElement, { childList: true, subtree: true });
 
 setTimeout(() => {
+  fixUploadedImageSources();
   applyAddonPresentation();
   applyCustomerBillButtons();
 }, 500);

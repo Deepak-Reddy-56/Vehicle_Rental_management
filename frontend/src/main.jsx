@@ -1,8 +1,9 @@
 import React,{useEffect,useState} from 'react';
+import {createRoot} from 'react-dom/client';
 import {MapPin,Search,Bike,CarFront,LogOut,LayoutDashboard,ClipboardList,Wrench,BarChart3,Building2,Settings2,Plus,X,CheckCircle2,AlertCircle,Menu,Pencil,Trash2,Gauge,ReceiptText,Clock3} from 'lucide-react';
 import './styles.css';
 const API=import.meta.env.VITE_API_URL||'http://localhost:5000/api';
-const money=n=>`₹${Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2})}`;
+const money=n=>`₹${Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2})`;
 const dateTime=d=>new Date(d).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'});
 const friendlyError=e=>{const m=String(e?.message||'');if(!m||/server|internal|mongodb|mongo|jwt|token is required|invalid or expired authentication/i.test(m))return 'Something went wrong. Please try again.';return m};
 async function api(path,opts={}){const token=localStorage.getItem('vrm_token');const headers={...(opts.body instanceof FormData?{}:{'Content-Type':'application/json'}),...(token?{Authorization:`Bearer ${token}`}:{})};const res=await fetch(`${API}${path}`,{...opts,headers});const data=await res.json().catch(()=>({success:false,message:'Request failed'}));if(!res.ok)throw new Error(data.message||'Request failed');return data}
